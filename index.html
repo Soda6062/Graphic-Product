@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Graphic — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=Anuphan:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d0b0a;
+    --bg-soft:#141110;
+    --surface:#1b1715;
+    --line:rgba(255,255,255,0.08);
+    --ink:#f3ede4;
+    --ink-dim:#9b938a;
+    --gold:#c2a36b;
+    --gold-soft:rgba(194,163,107,0.14);
+    --display:"Fraunces","Anuphan",Georgia,serif;
+    --body:"Inter","Anuphan",system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    font-weight:300;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--gold);color:#0d0b0a}
+
+  /* ---------- header ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px clamp(20px,5vw,64px);
+    background:linear-gradient(to bottom,rgba(13,11,10,0.9),rgba(13,11,10,0));
+    transition:background .4s;
+  }
+  .brand{
+    font-family:var(--display);
+    font-size:19px;font-weight:400;letter-spacing:.02em;
+  }
+  .brand b{color:var(--gold);font-weight:500}
+  .nav-meta{
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .back-btn{
+    border:none;background:none;color:var(--ink-dim);
+    font-family:var(--body);font-size:12px;letter-spacing:.18em;
+    text-transform:uppercase;cursor:pointer;
+    display:none;align-items:center;gap:9px;
+    transition:color .3s;
+  }
+  .back-btn:hover{color:var(--gold)}
+  .back-btn span{font-size:15px}
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    padding:120px clamp(20px,5vw,64px) 60px;
+    position:relative;overflow:hidden;
+  }
+  .hero-bg{position:absolute;inset:0;z-index:0}
+  .hero-bg .slide{
+    position:absolute;inset:0;
+    background-size:cover;background-position:center;
+    filter:grayscale(.2) brightness(.5);
+  }
+  /* รูปที่กำลัง fade out: ทึบ -> โปร่ง ใน 0.5 วิ */
+  .hero-bg .slide.fading{
+    opacity:0;
+    transition:opacity .5s linear;
+  }
+  .hero-veil{
+    position:absolute;inset:0;z-index:1;
+    background:linear-gradient(to right,rgba(13,11,10,.94) 0%,rgba(13,11,10,.7) 45%,rgba(13,11,10,.5) 100%),
+               linear-gradient(to top,rgba(13,11,10,.95),rgba(13,11,10,.3) 60%);
+  }
+  .hero > *:not(.hero-bg):not(.hero-veil){position:relative;z-index:2}
+  .hero-eyebrow{
+    font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:28px;
+    opacity:0;animation:rise .9s .1s forwards;
+  }
+  .hero h1{
+    font-family:var(--display);
+    font-weight:500;
+    font-size:clamp(44px,9vw,128px);
+    line-height:1.04;letter-spacing:-.01em;
+    max-width:16ch;
+  }
+  .hero h1 .it{font-style:italic;color:var(--gold)}
+  .hero h1 span{display:block;opacity:0;animation:rise 1s forwards}
+  .hero h1 span:nth-child(1){animation-delay:.2s}
+  .hero h1 span:nth-child(2){animation-delay:.34s}
+  .hero h1 span:nth-child(3){animation-delay:.48s}
+  .hero-sub{
+    margin-top:36px;max-width:46ch;color:var(--ink-dim);font-size:16px;
+    opacity:0;animation:rise 1s .7s forwards;
+  }
+  .scroll-hint{
+    position:absolute;bottom:38px;left:clamp(20px,5vw,64px);
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
+    display:flex;align-items:center;gap:12px;
+    opacity:0;animation:rise 1s 1s forwards;
+  }
+  .scroll-hint::before{content:"";width:42px;height:1px;background:var(--gold);
+    animation:line 2.4s ease-in-out infinite}
+
+  /* ---------- category grid ---------- */
+  .categories{
+    padding:30px clamp(20px,5vw,64px) 100px;
+  }
+  .section-label{
+    display:flex;align-items:baseline;gap:18px;
+    border-top:1px solid var(--line);padding-top:22px;margin-bottom:42px;
+  }
+  .section-label .n{font-size:11px;color:var(--gold);letter-spacing:.2em}
+  .section-label h2{
+    font-family:var(--display);font-weight:300;font-size:clamp(22px,3vw,30px);
+  }
+  .cat-grid{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(12px,1.5vw,22px);
+  }
+  .cat-card{
+    position:relative;aspect-ratio:16/11;border-radius:3px;overflow:hidden;
+    cursor:pointer;background:var(--surface);
+    border:1px solid var(--line);
+  }
+  .cat-card .cover{
+    position:absolute;inset:0;
+    background-size:cover;background-position:center;
+    transition:transform 1.1s cubic-bezier(.16,1,.3,1),filter .8s;
+    filter:grayscale(.3) brightness(.62);
+  }
+  .cat-card:hover .cover{transform:scale(1.06);filter:grayscale(0) brightness(.72)}
+  .cat-card .veil{
+    position:absolute;inset:0;
+    background:linear-gradient(to top,rgba(8,7,6,.92) 0%,rgba(8,7,6,.25) 55%,transparent 100%);
+  }
+  .cat-card .meta{
+    position:absolute;left:0;right:0;bottom:0;padding:clamp(20px,3vw,34px);
+    z-index:2;
+  }
+  .cat-card .idx{
+    font-size:11px;letter-spacing:.24em;color:var(--gold);
+    text-transform:uppercase;margin-bottom:12px;display:block;
+  }
+  .cat-card h3{
+    font-family:var(--display);font-weight:300;
+    font-size:clamp(24px,3.4vw,40px);line-height:1.05;letter-spacing:-.01em;
+  }
+  .cat-card .count{
+    margin-top:14px;font-size:12px;color:var(--ink-dim);letter-spacing:.05em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .cat-card .count .arr{
+    color:var(--gold);transition:transform .4s;display:inline-block;
+  }
+  .cat-card:hover .count .arr{transform:translateX(6px)}
+
+  /* ---------- detail (gallery) ---------- */
+  .detail{display:none;padding:120px clamp(20px,5vw,64px) 120px}
+  .detail.active{display:block;animation:fade .6s ease}
+  .detail-head{
+    border-bottom:1px solid var(--line);padding-bottom:34px;margin-bottom:48px;
+  }
+  .detail-head .idx{font-size:11px;letter-spacing:.26em;color:var(--gold);
+    text-transform:uppercase}
+  .detail-head h2{
+    font-family:var(--display);font-weight:300;
+    font-size:clamp(38px,7vw,82px);line-height:1;letter-spacing:-.02em;margin-top:18px;
+  }
+  .detail-head p{margin-top:20px;color:var(--ink-dim);max-width:52ch;font-size:15px}
+
+  .masonry{
+    columns:3;column-gap:clamp(12px,1.6vw,22px);
+  }
+  .shot{
+    break-inside:avoid;margin-bottom:clamp(12px,1.6vw,22px);
+    position:relative;border-radius:3px;overflow:hidden;cursor:zoom-in;
+    background:var(--surface);border:1px solid var(--line);
+    transition:grid-column .5s,transform .5s;
+  }
+  .shot img{display:block;width:100%;height:auto;
+    transition:filter .6s,transform 1s cubic-bezier(.16,1,.3,1);
+    filter:brightness(.92)}
+  .shot:hover img{filter:brightness(1.02);transform:scale(1.02)}
+  .shot .cap{
+    position:absolute;left:0;right:0;bottom:0;padding:18px;
+    background:linear-gradient(to top,rgba(8,7,6,.85),transparent);
+    font-size:12px;letter-spacing:.04em;opacity:0;transition:opacity .4s;
+  }
+  .shot:hover .cap{opacity:1}
+  /* expanded-in-grid state */
+  .masonry.expanded{columns:1;max-width:760px;margin:0 auto}
+  .shot.zoomed{cursor:zoom-out}
+
+  /* loading / empty */
+  .state{
+    text-align:center;padding:80px 0;color:var(--ink-dim);font-size:14px;
+    letter-spacing:.04em;
+  }
+  .state b{color:var(--ink);font-weight:500}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:50px clamp(20px,5vw,64px);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;
+    color:var(--ink-dim);font-size:12px;letter-spacing:.06em;
+  }
+  footer .brand{font-size:15px}
+
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @keyframes line{0%,100%{transform:scaleX(1);opacity:1}50%{transform:scaleX(.4);opacity:.4}}
+  .cat-card .cover.empty,.shot.empty-shot{
+    background:repeating-linear-gradient(135deg,#1b1715,#1b1715 12px,#191512 12px,#191512 24px);
+  }
+
+  @media(max-width:860px){
+    .masonry{columns:2}
+  }
+  @media(max-width:600px){
+    .cat-grid{grid-template-columns:1fr}
+    .masonry{columns:1}
+    .hero h1{font-size:clamp(40px,13vw,80px)}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Product<b>·</b>Graphic</div>
+  <button class="back-btn" id="backBtn"><span>←</span> ทุกหมวด</button>
+  <div class="nav-meta" id="navMeta">Portfolio ’26</div>
+</header>
+
+<!-- ===== HOME ===== -->
+<main id="home">
+  <section class="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-veil"></div>
+    <div class="hero-eyebrow">Visual Portfolio — Product Graphic</div>
+    <h1>
+      <span>ภาพที่ทำให้</span>
+      <span><i class="it">สินค้า</i> ดูมีค่า</span>
+      <span>กว่าที่เป็น</span>
+    </h1>
+    <p class="hero-sub">รวมงานออกแบบและถ่ายภาพเชิงพาณิชย์ จัดตามลักษณะการใช้งานจริง ตั้งแต่ภาพบรรยากาศ ไปจนถึงรายละเอียดพื้นผิวและเลย์เอาต์แพ็กเกจ</p>
+    <div class="scroll-hint">เลือกหมวดด้านล่าง</div>
+  </section>
+
+  <section class="categories">
+    <div class="section-label">
+      <span class="n">04</span>
+      <h2>หมวดผลงาน</h2>
+    </div>
+    <div class="cat-grid" id="catGrid"><!-- injected --></div>
+  </section>
+</main>
+
+<!-- ===== DETAIL ===== -->
+<section class="detail" id="detail">
+  <div class="detail-head">
+    <span class="idx" id="dIdx"></span>
+    <h2 id="dTitle"></h2>
+    <p id="dDesc"></p>
+  </div>
+  <div class="masonry" id="masonry"></div>
+</section>
+
+<footer>
+  <div class="brand">Product<b>·</b>Graphic</div>
+  <div>ออกแบบเพื่อจัดแสดงผลงานภาพเชิงพาณิชย์ — 2026</div>
+</footer>
+
+<script>
+/* ============================================================
+   ผลงานทั้งหมดฝังตรงจาก Supabase Storage (public URLs)
+   เพิ่ม/ลบรูปได้ที่ออบเจกต์ IMAGES ด้านล่าง
+   ============================================================ */
+
+const CATS = [
+  {key:"hero",     idx:"01", title:"Hero / Lifestyle Shot",
+   desc:"ภาพหลักที่วางสินค้าในบริบทการใช้งานจริง สร้างอารมณ์และเล่าเรื่องของแบรนด์ในเฟรมเดียว"},
+  {key:"angle",    idx:"02", title:"Front & Angle Shot",
+   desc:"ภาพสินค้าตรงและมุมเฉียงบนพื้นสะอาด เน้นรูปทรงและสัดส่วนให้ใช้ต่อในหน้าขายได้ทันที"},
+  {key:"texture",  idx:"03", title:"Texture / Material Close-up",
+   desc:"ภาพระยะใกล้ของพื้นผิวและวัสดุ ดึงรายละเอียดสัมผัสที่สื่อถึงคุณภาพของสินค้า"},
+  {key:"flat",     idx:"04", title:"Flat Artwork / Packaging Layout",
+   desc:"อาร์ตเวิร์กแบบแบนและเลย์เอาต์แพ็กเกจ จัดวางองค์ประกอบกราฟิกให้พร้อมผลิตจริง"},
+];
+
+/* ----- ผลงานจริง (Supabase Storage public URLs) ----- */
+const B="https://rmrxhigrwcgjjfmhdppc.supabase.co/storage/v1/object/public/Graphic";
+const IMAGES={
+  hero:[
+    `${B}/Graphic%201/file_000000000ddc720b9532f14028a076a0%20(1).png`,
+    `${B}/Graphic%201/file_000000000ddc720b9532f14028a076a0.png`,
+    `${B}/Graphic%201/file_0000000014807208ba4fce1ba0a256ec.png`,
+    `${B}/Graphic%201/file_0000000015907208975a7df3ae6f6db8.png`,
+    `${B}/Graphic%201/file_000000006dfc720ba4d4f955af0af65b.png`,
+    `${B}/Graphic%201/file_00000000aeec720b91b57638067d5341.png`,
+  ],
+  angle:[
+    `${B}/Graphic%202/file_0000000082f4720890c9739ec4a42b6a.png`,
+    `${B}/Graphic%202/file_000000008c14720786db44c0e422a6b6.png`,
+    `${B}/Graphic%202/file_0000000092287208bc020d99787bc970.png`,
+    `${B}/Graphic%202/file_00000000c9a87208996bc196c117dff8.png`,
+    `${B}/Graphic%202/file_00000000d2507208acf48f444d3f7b21.png`,
+    `${B}/Graphic%202/file_00000000dc6472088447cf25b9ac183a.png`,
+  ],
+  flat:[
+    `${B}/Graphic%203/file_00000000323872079d2bfa985d5cb96a.png`,
+    `${B}/Graphic%203/file_00000000490c71fa84230dbb0163db57.png`,
+    `${B}/Graphic%203/file_000000005bd47207b1fdbc44bf1612d6.png`,
+    `${B}/Graphic%203/file_0000000078f071faae46597cbd4bd6c1.png`,
+    `${B}/Graphic%203/file_00000000834471fa8ab34f0c764e15e4.png`,
+  ],
+  texture:[
+    `${B}/Graphic%204/file_00000000fd1872078663f85877574141.png`,
+    `${B}/Graphic%204/file_0000000095c8720993a33e39f3d5e8e3.png`,
+    `${B}/Graphic%204/file_000000007d287207881fe47346a708c4.png`,
+    `${B}/Graphic%204/file_000000002de47207876064471dd098fc.png`,
+    `${B}/Graphic%204/file_000000001bfc7207b6aede62aefb3d4f.png`,
+    `${B}/Graphic%204/file_0000000016687207841528c95268c4a8.png`,
+  ],
+};
+
+let WORKS=[];
+
+async function loadWorks(){
+  CATS.forEach(c=>{
+    (IMAGES[c.key]||[]).forEach((url,i)=>{
+      WORKS.push({category:c.key,title:`${c.title} — ${String(i+1).padStart(2,'0')}`,image_url:url});
+    });
+  });
+  renderCats();
+  startHeroSlideshow();
+}
+
+/* ----- พื้นหลัง hero -----
+   air time ต่อรูป 5.0 วิ
+   t=4.4 : รูปถัดไปเข้ามารอเป็นเลเยอร์ "ด้านหลัง" รูปปัจจุบัน (ทึบ ไม่ fade)
+   t=4.5 : รูปปัจจุบัน (เลเยอร์หน้า) เริ่ม fade out 0.5 วิ จางหมดพอดี t=5.0 เผยรูปหลัง
+   t=5.0 : ลบเลเยอร์เก่า รูปหลังกลายเป็นรูปปัจจุบัน แล้ววนรอบใหม่
+   หมายเหตุ: เลเยอร์ที่มารอจะถูกแทรกก่อนเลเยอร์ปัจจุบันใน DOM
+            จึงอยู่ "ด้านหลัง" เสมอ (later sibling วาดทับ earlier sibling) */
+function startHeroSlideshow(){
+  const bg=document.getElementById("heroBg");
+  const pool=WORKS.filter(w=>w.category!=="flat").map(w=>w.image_url).filter(Boolean);
+  if(!pool.length) return;
+
+  const CYCLE=5000, FADE_AT=4500, INCOMING_AT=4400;
+
+  let order=shuffle([...pool]);
+  let ptr=0;
+  function nextImg(){
+    if(ptr>=order.length){order=shuffle([...pool]);ptr=0;}
+    return order[ptr++];
+  }
+
+  // รูปแรก = เลเยอร์ปัจจุบัน (เป็น child เดียวใน bg)
+  let current=document.createElement("div");
+  current.className="slide";
+  current.style.backgroundImage=`url('${nextImg()}')`;
+  bg.appendChild(current);
+
+  function cycle(){
+    // 4.4 วิ: เตรียมรูปถัดไปไว้ด้านหลัง
+    setTimeout(()=>{
+      const incoming=document.createElement("div");
+      incoming.className="slide";
+      incoming.style.backgroundImage=`url('${nextImg()}')`;
+      bg.insertBefore(incoming,current); // แทรกก่อน current => อยู่หลัง current
+
+      // 4.5 วิ (อีก 0.1 วิ): current เริ่ม fade out
+      setTimeout(()=>{
+        current.classList.add("fading");
+      },INCOMING_AT===FADE_AT?0:(FADE_AT-INCOMING_AT));
+
+      // 5.0 วิ: ลบ current เก่า, incoming เป็น current ใหม่, วนต่อ
+      setTimeout(()=>{
+        current.remove();
+        current=incoming;
+        cycle();
+      },CYCLE-INCOMING_AT);
+    },INCOMING_AT);
+  }
+  cycle();
+}
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* aspect ratios เพื่อให้ masonry มีจังหวะ (เฉพาะ placeholder) */
+const RATIOS=["3/4","4/5","1/1","4/3","3/4","5/4","2/3"];
+
+function renderCats(){
+  const grid=document.getElementById("catGrid");
+  grid.innerHTML="";
+  CATS.forEach(c=>{
+    const items=WORKS.filter(w=>w.category===c.key);
+    const cover=items.find(w=>w.image_url)?.image_url;
+    const card=document.createElement("div");
+    card.className="cat-card";
+    card.innerHTML=`
+      <div class="cover ${cover?'':'empty'}" ${cover?`style="background-image:url('${cover}')"`:''}></div>
+      <div class="veil"></div>
+      <div class="meta">
+        <span class="idx">หมวด ${c.idx}</span>
+        <h3>${c.title}</h3>
+        <div class="count">${items.length} ผลงาน <span class="arr">→</span></div>
+      </div>`;
+    card.onclick=()=>openCat(c);
+    grid.appendChild(card);
+  });
+}
+
+function openCat(c){
+  const items=WORKS.filter(w=>w.category===c.key);
+  document.getElementById("dIdx").textContent=`หมวด ${c.idx}`;
+  document.getElementById("dTitle").textContent=c.title;
+  document.getElementById("dDesc").textContent=c.desc;
+  const m=document.getElementById("masonry");
+  m.classList.remove("expanded");
+  m.innerHTML="";
+
+  if(!items.length){
+    m.innerHTML=`<div class="state">ยังไม่มีผลงานในหมวดนี้ — <b>เพิ่มได้จาก Supabase</b></div>`;
+  }else{
+    items.forEach((w,i)=>{
+      const fig=document.createElement("figure");
+      fig.className="shot";
+      if(w.image_url){
+        fig.innerHTML=`<img src="${w.image_url}" alt="${w.title||''}" loading="lazy">
+          <figcaption class="cap">${w.title||''}</figcaption>`;
+      }else{
+        fig.classList.add("empty-shot");
+        fig.style.aspectRatio=RATIOS[i%RATIOS.length];
+        fig.innerHTML=`<figcaption class="cap" style="opacity:.6">${w.title||''}</figcaption>`;
+      }
+      fig.onclick=()=>toggleZoom(fig);
+      m.appendChild(fig);
+    });
+  }
+
+  document.getElementById("home").style.display="none";
+  document.getElementById("detail").classList.add("active");
+  document.getElementById("backBtn").style.display="flex";
+  document.getElementById("navMeta").style.display="none";
+  window.scrollTo({top:0,behavior:"instant"});
+}
+
+/* ขยายในกริด: เลือกการ์ดให้กว้างเต็ม คอลัมน์เดียว */
+function toggleZoom(fig){
+  const m=document.getElementById("masonry");
+  const already=fig.classList.contains("zoomed");
+  m.querySelectorAll(".shot").forEach(s=>s.classList.remove("zoomed"));
+  if(already){
+    m.classList.remove("expanded");
+  }else{
+    m.classList.add("expanded");
+    fig.classList.add("zoomed");
+    fig.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+}
+
+function goHome(){
+  document.getElementById("detail").classList.remove("active");
+  document.getElementById("home").style.display="block";
+  document.getElementById("backBtn").style.display="none";
+  document.getElementById("navMeta").style.display="block";
+  window.scrollTo({top:0,behavior:"instant"});
+}
+document.getElementById("backBtn").onclick=goHome;
+document.querySelector(".brand").style.cursor="pointer";
+document.querySelector(".brand").onclick=goHome;
+
+loadWorks();
+</script>
+</body>
+</html>
